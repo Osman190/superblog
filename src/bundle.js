@@ -36960,10 +36960,14 @@ var App = function (_React$Component) {
 
     _this.state = {
       posts: [],
-      form: []
+      form: {},
+      order: 0,
+      editing: false
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
+    _this.handleDelete = _this.handleDelete.bind(_this);
+    _this.handleEdit = _this.handleEdit.bind(_this);
     return _this;
   }
 
@@ -37001,14 +37005,54 @@ var App = function (_React$Component) {
     key: 'handleChange',
     value: function handleChange(e) {
       var form = Object.assign({}, this.state.form);
-      if (e.terget.value !== "") {
-        form[e.terget.id] = e.terget.value;
+      console.log(form);
+      console.log(e.target.value);
+      if (e.target.value !== "") {
+        form[e.target.id] = e.target.value;
+        console.log(form[e.target.id]);
       }
+      console.log(form);
       this.setState({ form: form });
+    }
+  }, {
+    key: 'handleDelete',
+    value: function handleDelete(id) {
+      var _this4 = this;
+
+      console.log(id);
+      _axios2.default.delete('http://localhost:5000/api/posts/' + id).then(function (response) {
+        console.log("Slide added successful: ", response);
+        fetch('http://localhost:5000/api/posts').then(function (resp) {
+          return resp.json();
+        }).then(function (posts) {
+          _this4.setState({ posts: posts });
+        });
+      }).catch(function (error) {
+        console.log("Error: ", error);
+      });
+    }
+  }, {
+    key: 'handleEdit',
+    value: function handleEdit(id) {
+      var _this5 = this;
+
+      console.log(id);
+      _axios2.default.put('http://localhost:5000/api/posts/' + id).then(function (response) {
+        console.log("Slide added successful: ", response);
+        fetch('http://localhost:5000/api/posts').then(function (resp) {
+          return resp.json();
+        }).then(function (posts) {
+          _this5.setState({ posts: posts });
+        });
+      }).catch(function (error) {
+        console.log("Error: ", error);
+      });
     }
   }, {
     key: 'render',
     value: function render() {
+      var _this6 = this;
+
       return _react2.default.createElement(
         'div',
         { className: 'container' },
@@ -37074,6 +37118,27 @@ var App = function (_React$Component) {
                   'p',
                   null,
                   post.content
+                ),
+                _react2.default.createElement(
+                  'h6',
+                  null,
+                  post.order
+                ),
+                _react2.default.createElement(
+                  'button',
+                  { className: 'btn btn-danger', onClick: function onClick() {
+                      return _this6.handleDelete(post._id);
+                    } },
+                  'Remove'
+                ),
+                _react2.default.createElement('br', null),
+                _react2.default.createElement('br', null),
+                _react2.default.createElement(
+                  'button',
+                  { className: 'btn btn-danger', onClick: function onClick() {
+                      return _this6.handleEdit(post._id);
+                    } },
+                  'Edit'
                 )
               );
             })

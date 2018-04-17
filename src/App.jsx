@@ -6,15 +6,19 @@ class App extends React.Component {
     super(props);
     this.state ={
       posts: [],
-      form: []
+      form: {},
+      order: 0,
+      editing: false
     }
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
+    this.handleEdit = this.handleEdit.bind(this)
   }
 
   componentWillMount(){
     fetch(`http://localhost:5000/api/posts`).then(resp => resp.json()).then(posts => {
-      this.setState({ posts: posts });
+      this.setState({ posts });
     });
   }
 
@@ -34,12 +38,39 @@ class App extends React.Component {
 
   handleChange(e) {
     let form = {...this.state.form};
-    if(e.terget.value !== ""){
-      form[e.terget.id] = e.terget.value
+    console.log(form)
+    console.log(e.target.value)
+    if(e.target.value !== ""){
+      form[e.target.id] = e.target.value
+      console.log(form[e.target.id])
     }
-    this.setState({form: form})
+    console.log(form)
+    this.setState({form})
   }
 
+  handleDelete(id) {
+    console.log(id);
+    axios.delete(`http://localhost:5000/api/posts/${id}`).then(response => {
+      console.log("Slide added successful: ", response);
+      fetch(`http://localhost:5000/api/posts`).then(resp => resp.json()).then(posts => {
+        this.setState({ posts });
+      });
+    }).catch(function (error) {
+      console.log("Error: ", error);
+    })
+  }
+
+  handleEdit(id) {
+    console.log(id);
+    axios.put(`http://localhost:5000/api/posts/${id}`).then(response => {
+      console.log("Slide added successful: ", response);
+      fetch(`http://localhost:5000/api/posts`).then(resp => resp.json()).then(posts => {
+        this.setState({ posts });
+      });
+    }).catch(function (error) {
+      console.log("Error: ", error);
+    })
+  }
   render() {
     return (
       <div className="container">
@@ -71,6 +102,11 @@ class App extends React.Component {
                   <li className="list-group-item" key={i}>
                     <h2>{post.name}</h2>
                     <p>{post.content}</p>
+                    <h6>{post.order}</h6>
+                  <button className="btn btn-danger" onClick={() => this.handleDelete(post._id)}>Remove</button>
+                  <br />
+                  <br />
+                  <button className="btn btn-danger" onClick={() => this.handleEdit(post._id)}>Edit</button>
                   </li>))
               }
           </ul>

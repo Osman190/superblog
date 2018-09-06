@@ -1,0 +1,25 @@
+:root {
+--ahmed: #54b9b6  
+}
+body{
+  background-color : var(--ahmed);
+}
+
+.ahmed,
+.nacho{
+display: grid;
+}
+.ahmed{
+  grid-area: "ahmed"
+}
+.nacho {
+  grid-area: "nacho"
+}
+.list-group-item{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+  "ahmed ..."
+  "...  nacho";
+}
